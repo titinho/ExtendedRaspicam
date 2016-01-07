@@ -1,0 +1,578 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package auto
+\inputencoding default
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Documentation of Extended Raspicam
+\end_layout
+
+\begin_layout Author
+Titusz Ozsváth
+\end_layout
+
+\begin_layout Date
+07.01.2016
+\end_layout
+
+\begin_layout Abstract
+Now, there is no available application for Raspberry Pi or Raspberry Pi
+ 2 which can handle the camera and which can reach more than 30 frame per
+ secundum.
+ So I extended the Raspicam application.
+ 
+\end_layout
+
+\begin_layout Section
+Preparation
+\end_layout
+
+\begin_layout Subsection
+Notes
+\end_layout
+
+\begin_layout Standard
+In this tutorial, I will work in Bash.
+\end_layout
+
+\begin_layout Subsection
+Download from internet
+\end_layout
+
+\begin_layout Enumerate
+Navigate to the library where you want to work.
+\end_layout
+
+\begin_layout Enumerate
+Make a new directory: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+sudo mkdir ExtendedRaspicam
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Download the original project from github:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+sudo git clone https://github.com/cedricve/raspicam
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+Add permissions:...
+\lang english
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+sudo chmod 777 -R ExtendedRaspicam/ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Step into the directory and make a build directory:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cd ExtendedRaspicam/raspicam && mkdir build
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Create a Makefile with CMake:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+sudo cmake ..
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Make and install:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+sudo make && sudo make install
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Try it out:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+raspicam_test
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Modifications
+\end_layout
+
+\begin_layout Subsection
+Notes
+\end_layout
+
+\begin_layout Standard
+I made these modifications in Netbeans.
+\end_layout
+
+\begin_layout Subsection
+The actions
+\end_layout
+
+\begin_layout Enumerate
+Navigate to ExtendedRaspicam/raspicam/src/private/private_impl.h.
+ Here you have to declare two functions:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+void setFps(unsigned int fps);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+unsigned int getFps() const;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+In private_impl.cpp the implementations come:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+void setFps(unsigned int fps) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	State.framerate = fps;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+unsigned int getFps() const {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return State.framerate;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+overwrite setDefaultStateParams() function: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+void Private_Impl::setDefaultStateParams() {...
+\end_layout
+
+\begin_layout Plain Layout
+
+	State.framerate          = 120;
+\end_layout
+
+\begin_layout Plain Layout
+
+	State.width 			 = 320;
+\end_layout
+
+\begin_layout Plain Layout
+
+	State.height 			= 240;
+\end_layout
+
+\begin_layout Plain Layout
+
+	...
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+In raspicam_cv.cpp:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+overwrite get() function:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+double RaspiCam_Cv::get ( int propId ) {
+\end_layout
+
+\begin_layout Plain Layout
+
+   switch ( propId ) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		...
+\end_layout
+
+\begin_layout Plain Layout
+
+		case CV_CAP_PROP_FPS:             
+\end_layout
+
+\begin_layout Plain Layout
+
+			return _impl->getFps();
+\end_layout
+
+\begin_layout Plain Layout
+
+			break;
+\end_layout
+
+\begin_layout Plain Layout
+
+		...
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+overwrite set() function:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+bool RaspiCam_Cv::set ( int propId, double value ) 
+\end_layout
+
+\begin_layout Plain Layout
+
+	switch ( propId ) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		...
+\end_layout
+
+\begin_layout Plain Layout
+
+		case CV_CAP_PROP_FPS:  
+\end_layout
+
+\begin_layout Plain Layout
+
+			_impl->setFps(value);
+\end_layout
+
+\begin_layout Plain Layout
+
+			break;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+In raspicam_cv_test.cpp:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+int nCount=500;
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+//if ( i%30==0 && i!=0 )             
+\end_layout
+
+\begin_layout Plain Layout
+
+//    cv::imwrite ("image"+std::to_string(i)+".jpg",image );
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Test
+\end_layout
+
+\begin_layout Itemize
+navigate to: 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+cd .../ExtendedRaspicam/raspicam/build
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+rebuild all in Bash:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+make && make sudo install
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+raspicam_cv_test
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\end_layout
+
+\end_body
+\end_document
